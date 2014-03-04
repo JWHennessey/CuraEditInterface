@@ -36,8 +36,8 @@ private:
     QColor m_backgroundColor;
     QGraphicsTextItem *cinTextItem;
     QString cinText;
-    zmq::context_t context;
-    zmq::socket_t *socket;
+    //zmq::context_t context;
+    //zmq::socket_t *socket;
 
     //ConsoleReader cr;
 };

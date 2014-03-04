@@ -27,9 +27,9 @@ Scene::Scene()
    addItem(cinTextItem);
    cinText = QString("Holding Text");
 //context(1);
-   socket (context, ZMQ_REP);
+   //socket (context, ZMQ_REP);
 
-      socket->bind ("tcp://*:5555");
+      //socket->bind ("tcp://*:5555");
 
 
    std::cout << "Hello World" << "\n";
@@ -37,15 +37,15 @@ Scene::Scene()
 
 void Scene::drawForeground(QPainter *painter, const QRectF &rect)
 {
-  zmq::message_t request;
+  //zmq::message_t request;
 
-  //  Wait for next request from client
-  socket->recv (&request);
+  ////  Wait for next request from client
+  //socket->recv (&request);
 
 
-  zmq::message_t reply (5);
-  memcpy ((void *) reply.data (), "World", 5);
-  socket->send (reply);
+  //zmq::message_t reply (5);
+  //memcpy ((void *) reply.data (), "World", 5);
+  //socket->send (reply);
   //std::cout << "Draw Foreground Called" << "\n";
   cinTextItem->setPlainText(cinText);
 }
