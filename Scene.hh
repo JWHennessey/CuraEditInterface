@@ -36,6 +36,7 @@ private:
     QColor m_backgroundColor;
     QGraphicsTextItem *cinTextItem;
     QString cinText;
+    static void zmqThread();
     //zmq::context_t context;
     //zmq::socket_t *socket;
 

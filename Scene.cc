@@ -3,7 +3,7 @@
 
 //#warning "Include Scene.cc"
 
-
+#include <thread>
 #include "Scene.hh"
 #include <QVector3D>
 #include "GLUT/glut.h"
@@ -26,27 +26,45 @@ Scene::Scene()
    cinTextItem->setDefaultTextColor(QColor(255, 255, 255));
    addItem(cinTextItem);
    cinText = QString("Holding Text");
-//context(1);
-   //socket (context, ZMQ_REP);
 
-      //socket->bind ("tcp://*:5555");
+   std::thread t1(zmqThread);
 
-
-   std::cout << "Hello World" << "\n";
+   std::cout << "Hello World from c++" << "\n";
 }
+
+void
+Scene::zmqThread()
+{
+  std::cout << "Hello World" << "\n";
+ //  Prepare our context and socket
+    //zmq::context_t context (1);
+    //zmq::socket_t socket (context, ZMQ_REP);
+    //socket.bind ("tcp://*:5555");
+
+    //while (true) {
+        //zmq::message_t request;
+
+        ////  Wait for next request from client
+        //socket.recv (&request);
+        //std::cout << "Received Hello" << std::endl;
+
+        ////  Do some 'work'
+//#ifndef _WIN32
+        //sleep(1);
+//#else
+    //Sleep (1);
+//#endif
+
+        ////  Send reply back to client
+        //zmq::message_t reply (5);
+        //memcpy ((void *) reply.data (), "World", 5);
+        //socket.send (reply);
+    //}
+}
+
 
 void Scene::drawForeground(QPainter *painter, const QRectF &rect)
 {
-  //zmq::message_t request;
-
-  ////  Wait for next request from client
-  //socket->recv (&request);
-
-
-  //zmq::message_t reply (5);
-  //memcpy ((void *) reply.data (), "World", 5);
-  //socket->send (reply);
-  //std::cout << "Draw Foreground Called" << "\n";
   cinTextItem->setPlainText(cinText);
 }
 
