@@ -16,37 +16,34 @@
 #else
 #include <windows.h>
 #endif
+
+#include <OpenMesh/Core/IO/MeshIO.hh>
+#include <SceneT.hh>
+#include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
+#include <OpenMesh/Tools/Utils/getopt.h>
+#include "MyMesh.hh"
 //#warning "Scene.hh included"
+
+#warning "Scene.hh included xxxxxx"
+
 
 using namespace Qt;
 
-class Scene : public QGraphicsScene
+class Scene : public SceneT<MyMesh>
 {
   Q_OBJECT
 public:
     /// default constructor
-    Scene();
-    void drawBackground(QPainter *painter, const QRectF &rect);
-    void drawForeground(QPainter *painter, const QRectF &rect);
+    Scene() : SceneT<MyMesh>()
+    {
 
-public slots:
-    //void updateText();
-
-private:
-    QColor m_backgroundColor;
-    QGraphicsTextItem *cinTextItem;
-    QString cinText;
-    static void zmqThread();
-    //zmq::context_t context;
-    //zmq::socket_t *socket;
-
-    //ConsoleReader cr;
+    }
 };
 
-#if !defined(SCENE_CC)
-#define SCENE_CC
-#  include "Scene.cc"
-#endif
+//#if !defined(SCENE_CC)
+//#define SCENE_CC
+//#  include "Scene.cc"
+//#endif
 
 #endif
 
