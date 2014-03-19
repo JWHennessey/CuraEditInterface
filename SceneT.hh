@@ -33,9 +33,9 @@ class SceneT : public QGraphicsScene
 public:
     /// default constructor
     typedef M MyMesh;
-    SceneT();
-    void drawBackground(QPainter *painter, const QRectF &rect);
-    void drawForeground(QPainter *painter, const QRectF &rect);
+    //SceneT();
+    //void drawBackground(QPainter *painter, const QRectF &rect);
+    //void drawForeground(QPainter *painter, const QRectF &rect);
 
 public slots:
     //void updateText();
