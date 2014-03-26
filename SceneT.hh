@@ -22,7 +22,9 @@
 #include <OpenMesh/Core/Utils/GenProg.hh>
 #include <OpenMesh/Core/Utils/color_cast.hh>
 #include <OpenMesh/Core/Mesh/Attributes.hh>
+#include <string>
 
+#warning "SceneT.hh included"
 
 using namespace Qt;
 
@@ -33,17 +35,25 @@ class SceneT : public QGraphicsScene
 public:
     /// default constructor
     typedef M MyMesh;
-    //SceneT();
-    //void drawBackground(QPainter *painter, const QRectF &rect);
-    //void drawForeground(QPainter *painter, const QRectF &rect);
+    SceneT();
+    void drawBackground(QPainter *painter, const QRectF &rect);
+    void drawForeground(QPainter *painter, const QRectF &rect);
 
 public slots:
     //void updateText();
     void startZMQThread();
 
 private:
+    float m_distance;
+    float m_vertical;
+    float m_horizontal;
+    float radius;
+    QVector3D m_rotation;
+    const float TANSLATE_SPEED;
+    OpenMesh::IO::Options _options;
     MyMesh mesh;
-    void loadModel();
+    QtModelT<M>* model;
+    void loadModel(std::string filename);
     QColor m_backgroundColor;
     QGraphicsTextItem *cinTextItem;
     QString cinText;
@@ -59,7 +69,7 @@ private:
 };
 
 #if !defined(SCENET_CC)
-#define SCENET_CC
+#define SCENET_CC_Templates
 #  include "SceneT.cc"
 #endif
 

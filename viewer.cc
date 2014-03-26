@@ -5,7 +5,7 @@
 
 using namespace Qt;
 
-//#warning "viewer.cc included"
+#warning "viewer.cc included"
 
 
 class GraphicsView : public QGraphicsView
@@ -34,6 +34,8 @@ int main(int argc, char **argv)
     Scene *scene = new Scene();
     view.setScene(scene);
     view.show();
+
+    std::cout << "main" << "\n";
 
     view.resize(1024, 768);
 

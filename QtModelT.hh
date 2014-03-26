@@ -15,7 +15,7 @@
 
 //#include <flann/io/hdf5.h>
 
-#warning "SceneT.cc"
+#warning "QtModelT.hh included"
 
 using namespace Qt;
 using namespace OpenMesh;
@@ -26,7 +26,8 @@ class QtModelT : public QGraphicsItem
 {
 public:
     typedef M MyMesh;
-
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    QRectF boundingRect() const;
 public:
      M mesh;
 

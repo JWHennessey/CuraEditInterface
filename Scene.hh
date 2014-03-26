@@ -18,7 +18,7 @@
 #endif
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
-#include <SceneT.hh>
+#include "SceneT.hh"
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 #include <OpenMesh/Tools/Utils/getopt.h>
 #include "MyMesh.hh"
@@ -36,7 +36,7 @@ public:
     /// default constructor
     Scene() : SceneT<MyMesh>()
     {
-
+      std::cout << "Scene" << "\n";
     }
 };
 

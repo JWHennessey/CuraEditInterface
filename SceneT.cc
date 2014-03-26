@@ -19,10 +19,15 @@
 #include <windows.h>
 #endif
 
-#warning "SceneT.cc included YYYYYYYY xxxxxx"
+#warning "SceneT.cc included"
 
 template <typename M>
 SceneT<M>::SceneT()
+: m_backgroundColor(0.0f, 0.0f, 0.0f)
+, m_distance(4.5f)
+, m_vertical(-0.1f)
+, m_horizontal(0.0f)
+, TANSLATE_SPEED(0.01f)
 {
    cinTextItem = new QGraphicsTextItem;
    cinTextItem->setPos(150,70); 
@@ -162,7 +167,7 @@ SceneT<M>::drawForeground(QPainter *painter, const QRectF &rect)
     glEnable(GL_MULTISAMPLE);
     
     std::cout << "Render Outside" << std::endl;
-    mesh.render();
+    model->render();
 
     glDisable(GL_MULTISAMPLE);
 
@@ -217,11 +222,11 @@ SceneT<M>::drawBackground(QPainter *painter, const QRectF &rect)
 
 template <typename M>
 void
-SceneT<M>::loadModel(String filename)
+SceneT<M>::loadModel(std::string filename)
 {
   if(OpenMesh::IO::read_mesh(mesh, filename.erase(0,1), _options))
   {
-    //
+    model = new QtModelT<M>(mesh);
     std::cout << "Mesh Loaded" << "\n";
   }
 }

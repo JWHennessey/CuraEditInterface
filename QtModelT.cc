@@ -12,6 +12,8 @@
 #include <cmath>
 #include <math.h> 
 
+#warning "QtModelT.cc incuded"
+
 template <typename M>
 QtModelT<M>::QtModelT(M& m)
   : modelColor(100, 100, 100)
@@ -83,6 +85,50 @@ QtModelT<M>::render()
 
 
 
+}
+
+template <typename M>
+void
+QtModelT<M>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+  std::cout << "paint" << "\n";
+  painter->drawRect(boundingRect());
+  painter->beginNativePainting();
+  glPushMatrix();
+  glTranslatef(horizontal, vertical, 0);
+  glRotatef(modelRotation.x(), 1, 0, 0);
+  glRotatef(modelRotation.y(), 0, 1, 0);
+  glRotatef(modelRotation.z(), 0, 0, 1);
+
+  glEnable(GL_DEPTH_TEST);
+  glEnableClientState(GL_VERTEX_ARRAY);
+
+  if ( mesh.has_vertex_colors() )
+  {
+    glEnableClientState( GL_COLOR_ARRAY );
+    glColorPointer(3, GL_FLOAT, 0, mesh.vertex_colors());
+  }
+  //glColor4f(modelColor.redF(), modelColor.greenF(), modelColor.blueF(), 1.0f);
+  glVertexPointer(3, GL_FLOAT, 0, mesh.points());
+  glDrawArrays( GL_POINTS, 0, static_cast<GLsizei>(mesh.n_vertices()) );
+
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glDisable(GL_DEPTH_TEST);
+
+  glDisableClientState(GL_COLOR_ARRAY);  
+
+  glPopMatrix();
+
+  painter->endNativePainting();
+
+}
+
+
+template <typename M>
+QRectF 
+QtModelT<M>::boundingRect() const
+{
+  return QRectF(0,0, 1024, 768);
 }
 
 
