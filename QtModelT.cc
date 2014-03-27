@@ -12,7 +12,7 @@
 #include <cmath>
 #include <math.h> 
 
-#warning "QtModelT.cc incuded"
+//#warning "QtModelT.cc incuded"
 
 template <typename M>
 QtModelT<M>::QtModelT(M& m)
@@ -24,7 +24,47 @@ QtModelT<M>::QtModelT(M& m)
 {
   mesh = m;
 
+  double min_x, max_x, min_y, max_y, min_z, max_z;
+  bool first = true;
+  for (typename M::VertexIter v_it=mesh.vertices_begin(); v_it!=mesh.vertices_end(); ++v_it) 
+  {
+    if(first){
+      min_x = mesh.point(*v_it)[0];
+      max_x = mesh.point(*v_it)[0];
+      min_y = mesh.point(*v_it)[1];
+      max_y = mesh.point(*v_it)[1];
+      min_z = mesh.point(*v_it)[2];
+      max_z = mesh.point(*v_it)[2];
+      first = false;
+    }
 
+    if(mesh.point(*v_it)[0] < min_x )
+      min_x = mesh.point(*v_it)[0];
+    else if(mesh.point(*v_it)[0] > max_x )
+      max_x = mesh.point(*v_it)[0];
+
+    if(mesh.point(*v_it)[1] < min_y )
+      min_y = mesh.point(*v_it)[1];
+    else if(mesh.point(*v_it)[1] > max_y )
+      max_y = mesh.point(*v_it)[1];
+
+    if(mesh.point(*v_it)[2] < min_z )
+      min_z = mesh.point(*v_it)[2];
+    else if(mesh.point(*v_it)[2] > max_z )
+      max_z = mesh.point(*v_it)[2];
+
+  }
+  typedef typename M::Point Point;
+  for (typename M::VertexIter v_it=mesh.vertices_begin(); v_it!=mesh.vertices_end(); ++v_it) 
+  {
+    mesh.set_point( *v_it, Point(
+          2.0*(mesh.point(*v_it)[0]-min_x)/(max_x-min_x) - 1.0,
+          2.0*(mesh.point(*v_it)[1]-min_y)/(max_y-min_y) - 1.0,
+          2.0*(mesh.point(*v_it)[2]-min_z)/(max_z-min_z) - 1.0)
+    );
+  }
+
+  calcNormals();
 }
 
 
@@ -43,7 +83,7 @@ QtModelT<M>::render()
 
     typename M::ConstFaceVertexIter fvIt;
 
-    std::cout << "Render" << "\n";
+    std::cout << "QtModel Render" << "\n";
     glPushMatrix();
     glTranslatef(horizontal, vertical, 0);
     glRotatef(modelRotation.x(), 1, 0, 0);
@@ -71,19 +111,17 @@ QtModelT<M>::render()
      }
      glEnd();
 
-    glBegin(GL_LINES);
-    glLineWidth(2.0f);
-    for (typename M::VertexIter v_it=mesh.vertices_begin(); v_it!=mesh.vertices_end(); ++v_it) 
-    {
-      glColor3b (255, 255, 255);
-      glVertex3f(mesh.point(*v_it)[0], mesh.point(*v_it)[1], mesh.point(*v_it)[2]);
-      glVertex3f(mesh.point(*v_it)[0]+mesh.normal(*v_it)[0], mesh.point(*v_it)[1]+mesh.normal(*v_it)[1], mesh.point(*v_it)[2]+mesh.normal(*v_it)[2]);
+    //glBegin(GL_LINES);
+    //glLineWidth(2.0f);
+    //for (typename M::VertexIter v_it=mesh.vertices_begin(); v_it!=mesh.vertices_end(); ++v_it) 
+    //{
+      //glColor3b (255, 255, 255);
+      //glVertex3f(mesh.point(*v_it)[0], mesh.point(*v_it)[1], mesh.point(*v_it)[2]);
+      //glVertex3f(mesh.point(*v_it)[0]+mesh.normal(*v_it)[0], mesh.point(*v_it)[1]+mesh.normal(*v_it)[1], mesh.point(*v_it)[2]+mesh.normal(*v_it)[2]);
 
-    }
-    glEnd();
+    //}
+    //glEnd();
     glPopMatrix();
-
-
 
 }
 

@@ -3,7 +3,7 @@
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 #include <eigen3/Eigen/Dense>
 
-#warning "MyMesh.hh included"
+//#warning "MyMesh.hh included"
 
 struct MyTraits : public OpenMesh::DefaultTraits
 {

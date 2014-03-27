@@ -24,7 +24,7 @@
 #include <OpenMesh/Core/Mesh/Attributes.hh>
 #include <string>
 
-#warning "SceneT.hh included"
+//#warning "SceneT.hh included"
 
 using namespace Qt;
 
@@ -43,13 +43,21 @@ public slots:
     //void updateText();
     void startZMQThread();
 
+protected:
+    QWidget *saveModelButton;
+
 private:
+    QDialog *createDialog(const QString &windowTitle) const;
     float m_distance;
     float m_vertical;
     float m_horizontal;
     float radius;
     QVector3D m_rotation;
     const float TANSLATE_SPEED;
+    QTime m_time;
+    int m_mouseEventTime;
+
+    QGraphicsRectItem *m_lightItem;
     OpenMesh::IO::Options _options;
     MyMesh mesh;
     QtModelT<M>* model;
@@ -62,6 +70,12 @@ private:
     bool hasModel;
     void setDefaultMaterial();
     void setDefaultLight();
+    void wheelEvent(QGraphicsSceneWheelEvent * wheelEvent);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void keyPressEvent( QKeyEvent* event);
+    
     //zmq::context_t context;
     //zmq::socket_t *socket;
 

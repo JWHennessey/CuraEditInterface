@@ -5,7 +5,7 @@
 
 using namespace Qt;
 
-#warning "viewer.cc included"
+//#warning "viewer.cc included"
 
 
 class GraphicsView : public QGraphicsView

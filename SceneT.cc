@@ -19,7 +19,7 @@
 #include <windows.h>
 #endif
 
-#warning "SceneT.cc included"
+//#warning "SceneT.cc included"
 
 template <typename M>
 SceneT<M>::SceneT()
@@ -39,6 +39,41 @@ SceneT<M>::SceneT()
    firstDraw = true;
    hasModel = false;
    //startZMQThread();
+
+   QWidget *controls = createDialog(tr("Controls"));
+   saveModelButton = new QPushButton(tr("Save model"));
+   controls->layout()->addWidget(saveModelButton);
+
+    QWidget *widgets[] = { controls };
+
+    for (uint i = 0; i < sizeof(widgets) / sizeof(*widgets); ++i) {
+      QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget(0, Qt::Dialog);
+      proxy->setWidget(widgets[i]);
+      addItem(proxy);
+    }
+
+    QPointF pos(10, 10);
+    foreach (QGraphicsItem *item, items()) {
+      item->setFlag(QGraphicsItem::ItemIsMovable);
+      item->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+      const QRectF rect = item->boundingRect();
+      item->setPos(pos.x() - rect.x(), pos.y() - rect.y());
+      pos += QPointF(0, 10 + rect.height());
+    }
+
+}
+
+template <typename M>
+QDialog
+*SceneT<M>::createDialog(const QString &windowTitle) const
+{
+  QDialog *dialog = new QDialog(0, Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+
+  dialog->setWindowOpacity(0.8);
+  dialog->setWindowTitle(windowTitle);
+  dialog->setLayout(new QVBoxLayout);
+
+  return dialog;
 }
 
 
@@ -88,6 +123,9 @@ template <typename M>
 void
 SceneT<M>::setDefaultMaterial(void)
 {
+  
+  std::cout << "Set Default Material" << "\n";
+
   GLfloat mat_a[] = {0.1, 0.1, 0.1, 1.0};
   GLfloat mat_d[] = {0.7, 0.7, 0.5, 1.0};
   GLfloat mat_s[] = {1.0, 1.0, 1.0, 1.0};
@@ -106,6 +144,9 @@ template <typename M>
 void
 SceneT<M>::setDefaultLight(void)
 {
+
+  std::cout << "Set Default Light" << "\n";
+
   GLfloat pos1[] = { 0.1,  0.1, -0.02, 0.0};
   GLfloat pos2[] = {-0.1,  0.1, -0.02, 0.0};
   GLfloat pos3[] = { 0.0,  0.0,  0.1,  0.0};
@@ -133,7 +174,7 @@ template <typename M>
 void
 SceneT<M>::drawForeground(QPainter *painter, const QRectF &rect)
 {
-  cinTextItem->setPlainText(cinText);
+  //cinTextItem->setPlainText(cinText);
   if(firstDraw)
   {
     firstDraw = false;
@@ -231,6 +272,131 @@ SceneT<M>::loadModel(std::string filename)
   }
 }
 
+
+template <typename M>
+void
+SceneT<M>::wheelEvent(QGraphicsSceneWheelEvent *event)
+{
+
+  QGraphicsScene::wheelEvent(event);
+  if (event->isAccepted())
+    return;
+
+  m_distance *= qPow(1.2, -event->delta() / 120.);
+  //std::cout << m_distance << "\n";
+  event->accept();
+  update();
+}
+
+template <typename M>
+void
+SceneT<M>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+  QGraphicsScene::mouseMoveEvent(event);
+  if (event->isAccepted())
+    return;
+  if (event->buttons() & Qt::LeftButton) {
+    const QPointF delta = event->scenePos() - event->lastScenePos();
+    QVector3D angularImpulse = QVector3D(delta.y(), delta.x(), 0) * 0.1;
+    
+    m_rotation += angularImpulse;
+
+    event->accept();
+    update();
+  }
+}
+
+template <typename M>
+void
+SceneT<M>::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+  QGraphicsScene::mousePressEvent(event);
+  if (event->isAccepted())
+    return;
+  m_mouseEventTime = m_time.elapsed();
+  event->accept();
+}
+
+template <typename M>
+void
+SceneT<M>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+  QGraphicsScene::mouseReleaseEvent(event);
+  if (event->isAccepted())
+    return;
+  const int delta = m_time.elapsed() - m_mouseEventTime;
+  event->accept();
+  update();
+}
+
+template <typename M>
+void
+SceneT<M>::keyPressEvent( QKeyEvent* event)
+{
+  //const int radioId = whichRadioButton();
+  //if(radioId  == 1)
+  //{
+    switch(event->key())
+    {
+      case Key_Up:
+        m_vertical += TANSLATE_SPEED;
+        break;
+      case Key_Down:
+        m_vertical -= TANSLATE_SPEED;
+        break;
+      case Key_Right:
+        m_horizontal += TANSLATE_SPEED;
+        break;
+      case Key_Left:
+        m_horizontal -= TANSLATE_SPEED;
+        break;
+    }
+  //}
+  //else
+  //{
+    //switch(event->key())
+    //{
+      //case Key_Up:
+        //models[radioId-2]->updateVertical(TANSLATE_SPEED);
+        //break;
+      //case Key_Down:
+        //models[radioId-2]->updateVertical(-TANSLATE_SPEED);
+        //break;
+      //case Key_Right:
+        //models[radioId-2]->updateHorizontal(TANSLATE_SPEED);
+        //break;
+      //case Key_Left:
+        //models[radioId-2]->updateHorizontal(-TANSLATE_SPEED);
+        //break;
+    //}
+  //}
+  event->accept();
+  update();
+}
+
+template <typename M>
+void
+QtModelT<M>::calcNormals()
+{
+
+  //std::cout << "calcNormals()" << "\n";
+  OpenMesh::IO::Options opt;
+  mesh.request_vertex_normals();
+  // Add face normals as default property
+  mesh.request_face_normals();
+
+  // If the file did not provide vertex normals, then calculate them
+  if ( !opt.check( OpenMesh::IO::Options::VertexNormal ) &&
+       mesh.has_face_normals() && mesh.has_vertex_normals() )
+  {
+    // let the mesh update the normals
+    mesh.update_face_normals();
+    mesh.update_vertex_normals();
+
+    //std::cout << "update_normals()" << "\n";
+  }
+
+}
 
 //void Scene::updateText()
 //{

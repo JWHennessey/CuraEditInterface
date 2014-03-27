@@ -15,7 +15,7 @@
 
 //#include <flann/io/hdf5.h>
 
-#warning "QtModelT.hh included"
+//#warning "QtModelT.hh included"
 
 using namespace Qt;
 using namespace OpenMesh;
@@ -30,8 +30,6 @@ public:
     QRectF boundingRect() const;
 public:
      M mesh;
-
-
     QtModelT(M& m);
     ~QtModelT();
     void render();
@@ -44,7 +42,7 @@ private:
     GLfloat horizontal;
     GLfloat depth;
     const float deg2Rad;
-
+    void calcNormals();
 
 };
 

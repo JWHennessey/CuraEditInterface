@@ -24,7 +24,7 @@
 #include "MyMesh.hh"
 //#warning "Scene.hh included"
 
-#warning "Scene.hh included xxxxxx"
+//#warning "Scene.hh included xxxxxx"
 
 
 using namespace Qt;
