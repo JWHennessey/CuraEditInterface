@@ -45,7 +45,8 @@ public slots:
 
 protected:
     QWidget *saveModelButton;
-
+    GLuint PickBuffer[65535];
+    bool clicked;
 private:
     QDialog *createDialog(const QString &windowTitle) const;
     float m_distance;

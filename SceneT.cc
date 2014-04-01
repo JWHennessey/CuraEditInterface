@@ -321,12 +321,61 @@ template <typename M>
 void
 SceneT<M>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+  if(model != NULL){
+    glRenderMode(GL_SELECT);
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    gluPickMatrix(event->scenePos().x(), (GLdouble)(viewport[3]-event->scenePos().y()), 1, 1, viewport);
+    gluPerspective(70, width() / height(), 0.01, 1000);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(m_horizontal, m_vertical, -m_distance);
+    glRotatef(m_rotation.x(), 1, 0, 0);
+    glRotatef(m_rotation.y(), 0, 1, 0);
+    glRotatef(m_rotation.z(), 0, 0, 1);
+    
+    glEnable(GL_MULTISAMPLE);
+    glInitNames();
+    glPushName( 0xffffffff );
+    model->render();
+    
+    glDisable(GL_MULTISAMPLE);
+    
+    glPopMatrix();
+    
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+  }
+  GLuint Nhits = glRenderMode(GL_RENDER);
+  clicked == false;
+  std::cout << Nhits << " y\n";
+  if (Nhits > 0){
+    GLuint item;
+    GLuint front;
+    for(size_t i = 0, index = 0; i < Nhits; i++ )
+    {
+      GLuint nitems = PickBuffer[index++];
+      index+= 2;
+      for(size_t j = 0; j < nitems; j++ )
+      {
+        item = PickBuffer[index++];
+        std::cout << Nhits << " z" << item << " \n";
+      }
+      model->select(item);
+    }
+  } else {
   QGraphicsScene::mouseReleaseEvent(event);
   if (event->isAccepted())
     return;
   const int delta = m_time.elapsed() - m_mouseEventTime;
   event->accept();
   update();
+  }
 }
 
 template <typename M>

@@ -33,6 +33,7 @@ public:
     QtModelT(M& m);
     ~QtModelT();
     void render();
+    void select(int faceNumber);
 
 
 private:
